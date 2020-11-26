@@ -8,7 +8,7 @@ const Users = () => {
       name: "Alejandro",
       image:
         "https://www.treebo.com/blog/wp-content/uploads/2017/12/baga_beach__north_go_QvVbp.jpg",
-      places: 3,
+      places: 1,
     },
   ];
   return <UsersList items={USERS} />;
