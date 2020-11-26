@@ -1,0 +1,15 @@
+.navbar {
+  background: #ff0055;
+}
+
+.navbar h1 {
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.navbar h6 {
+  color: white;
+  font-weight: bold;
+  margin: 0;
+}

@@ -18,10 +18,12 @@
 .user-item a:hover,
 .user-item a:active {
   background: #ffd900;
+  text-decoration: none;
 }
 
 .user-item__content {
   padding: 0;
+  border: none;
 }
 
 .user-item__image {
