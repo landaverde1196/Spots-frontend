@@ -1,31 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { NavLink } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import Backdrop from "../UIElements/Backdrop";
+import NavLinks from "./NavLinks";
 
 import "./NavBar.css";
 
 const NavBar = () => {
-  return (
-    <Navbar className="navbar" collapseOnSelect expand="lg">
-      <Navbar.Brand href="/">
-        <h1>Spots</h1>
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" className="toggle" />
-      <Navbar.Collapse id="responsive-navbar-nav" collapseOnSelect>
-        <Nav className="mr-auto"></Nav>
+  const [backDropShow, setBackDropShow] = useState(false);
 
-        <Nav className="nav-links">
-          <NavLink to="/" exact>
-            ALL USERS
-          </NavLink>
-          <NavLink to="/u1/places">MY PLACES</NavLink>
-          <NavLink to="/places/new">ADD PLACE</NavLink>
-          <NavLink to="/auth">AUTHENTICATE</NavLink>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+  const backDropShowHandler = () => {
+    setBackDropShow(true);
+  };
+
+  const backDropCloseHandler = () => {
+    setBackDropShow(false);
+  };
+
+  return (
+    <>
+      {backDropShow && <Backdrop />}
+      <Navbar className="navbar" expand="lg" collapseOnSelect>
+        <Nav.Link as={NavLink} to="/">
+          <h1>Spots</h1>
+        </Nav.Link>
+
+        <Navbar.Toggle
+          aria-controls="responsive-navbar-nav"
+          className="toggle"
+          onClick={backDropShowHandler}
+        />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <NavLinks clicked={backDropCloseHandler} />
+        </Navbar.Collapse>
+      </Navbar>
+      )
+    </>
   );
 };
 
