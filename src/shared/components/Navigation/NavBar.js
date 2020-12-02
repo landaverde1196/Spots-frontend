@@ -1,42 +1,48 @@
 import React, { useState } from "react";
 
-import { NavLink } from "react-router-dom";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import Backdrop from "../UIElements/Backdrop";
+import { Link } from "react-router-dom";
+import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
+import SideDrawer from "./SideDrawer";
+import Backdrop from "../UIElements/Backdrop";
 
 import "./NavBar.css";
 
-const NavBar = () => {
-  const [backDropShow, setBackDropShow] = useState(false);
+const NavBar = (props) => {
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
-  const backDropShowHandler = () => {
-    setBackDropShow(true);
+  const openDrawer = () => {
+    setDrawerIsOpen(true);
   };
 
-  const backDropCloseHandler = () => {
-    setBackDropShow(false);
+  const closeDrawer = () => {
+    setDrawerIsOpen(false);
   };
-
   return (
     <>
-      {backDropShow && <Backdrop />}
-      <Navbar className="navbar" expand="lg" collapseOnSelect>
-        <Nav.Link as={NavLink} to="/">
-          <h1>Spots</h1>
-        </Nav.Link>
+      {drawerIsOpen && <Backdrop clicked={closeDrawer} />}
 
-        <Navbar.Toggle
-          aria-controls="responsive-navbar-nav"
-          className="toggle"
-          onClick={backDropShowHandler}
-        />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <NavLinks clicked={backDropCloseHandler} />
-        </Navbar.Collapse>
-      </Navbar>
-      )
+      <SideDrawer
+        className="main-navigation__drawer-nav"
+        show={drawerIsOpen}
+        clicked={closeDrawer}
+      >
+        <NavLinks />
+      </SideDrawer>
+
+      <MainHeader>
+        <button className="main-navigation__menu-btn" onClick={openDrawer}>
+          <span />
+          <span />
+          <span />
+        </button>
+        <h1 className="main-navigation__title">
+          <Link to="/">SPOTS</Link>
+        </h1>
+        <nav className="main-navigation__header-nav">
+          <NavLinks />
+        </nav>
+      </MainHeader>
     </>
   );
 };
