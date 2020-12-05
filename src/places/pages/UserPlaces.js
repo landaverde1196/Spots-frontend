@@ -11,8 +11,8 @@ const DUMMY_PLACES = [
       "https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg",
     address: "20 W 34th St, New York, NY 10001",
     location: {
-      lat: 40.7484405,
-      lng: -73.9878531,
+      lat: 40.7482438,
+      lng: -73.9853889,
     },
     creator: "u1",
   },
@@ -23,8 +23,8 @@ const DUMMY_PLACES = [
     imageUrl: "https://static.toiimg.com/photo/77757963.cms",
     address: "93 Ferry St, Jersey City, NJ 07307",
     location: {
-      lat: 40.7411428,
-      lng: -74.0526835,
+      lat: 40.689249400000016,
+      lng: -74.04450039999998,
     },
     creator: "u2",
   },
