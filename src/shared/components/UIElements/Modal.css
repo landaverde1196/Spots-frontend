@@ -8,7 +8,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   border-radius: 8px;
   display: block;
-  height: 65vh;
+  height: 45vh;
 }
 
 .modal__header {
@@ -37,7 +37,7 @@
 @media (min-width: 768px) {
   .modal {
     left: calc(50% - 20rem);
-    height: 55vh;
+    height: 40vh;
     width: 40rem;
   }
 
