@@ -12,6 +12,7 @@ const PlaceItem = (props) => {
 
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
+
   const showDeleteWarningHandler = () => setShowConfirmModal(true);
   const cancelDeleteHandler = () => setShowConfirmModal(false);
   const confirmDeleteHandler = () => {
