@@ -15,7 +15,7 @@ import "./Auth.css";
 const Auth = () => {
   const auth = useContext(AuthContext);
 
-  const [isLogInMode, setIsLogInMode] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -32,12 +32,12 @@ const Auth = () => {
 
   const authSubmitHandler = (event) => {
     event.preventDefault();
-    console.log(formState);
+    console.log(formState.inputs);
     auth.login();
   };
 
   const switchModeHandler = () => {
-    if (!isLogInMode) {
+    if (!isLoginMode) {
       setFormData(
         {
           ...formState.inputs,
@@ -57,7 +57,7 @@ const Auth = () => {
         false
       );
     }
-    setIsLogInMode((prevMode) => !prevMode);
+    setIsLoginMode((prevMode) => !prevMode);
   };
 
   return (
@@ -65,7 +65,7 @@ const Auth = () => {
       <h2>Login Required</h2>
       <hr />
       <form onSubmit={authSubmitHandler}>
-        {!isLogInMode && (
+        {!isLoginMode && (
           <Input
             element="input"
             id="name"
@@ -95,12 +95,12 @@ const Auth = () => {
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>
-          {isLogInMode ? "LOGIN" : "SIGNUP"}
-        </Button>
-        <Button inverse onClick={switchModeHandler}>
-          SWITCH TO {isLogInMode ? "SIGNUP" : "LOGIN"}
+          {isLoginMode ? "LOGIN" : "SIGNUP"}
         </Button>
       </form>
+      <Button inverse onClick={switchModeHandler}>
+        SWITCH TO {isLoginMode ? "SIGNUP" : "LOGIN"}
+      </Button>
     </Card>
   );
 };
