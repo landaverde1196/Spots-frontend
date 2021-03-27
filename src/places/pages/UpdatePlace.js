@@ -1,47 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import { useForm } from "../../shared/hooks/form-hook";
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import Input from "../../shared/components/FormElements/Input";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceForm.css";
 
-const DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    imageUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/c/c7/Empire_State_Building_from_the_Top_of_the_Rock.jpg",
-    address: "20 W 34th St, New York, NY 10001",
-    location: {
-      lat: 40.7482438,
-      lng: -73.9853889,
-    },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Statue of Liberty",
-    description: "One of the most famous monuments in NY!",
-    imageUrl: "https://static.toiimg.com/photo/77757963.cms",
-    address: "93 Ferry St, Jersey City, NJ 07307",
-    location: {
-      lat: 40.689249400000016,
-      lng: -74.04450039999998,
-    },
-    creator: "u2",
-  },
-];
-
 const UpdatePlace = () => {
-  const [isLoading, setIsLoading] = useState(true);
-
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [loadedPlace, setLoadedPlace] = useState();
   const { placeId } = useParams();
+  const history = useHistory();
+  const auth = useContext(AuthContext);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -57,33 +35,56 @@ const UpdatePlace = () => {
     false
   );
 
-  const identifiedPlace = DUMMY_PLACES.find((p) => p.id === placeId);
-
   useEffect(() => {
-    if (identifiedPlace) {
-      setFormData(
-        {
-          title: {
-            value: identifiedPlace.title,
-            isValid: true,
+    const fetchPlace = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/${placeId}`
+        );
+        setLoadedPlace(responseData.place);
+        setFormData(
+          {
+            title: {
+              value: responseData.place.title,
+              isValid: true,
+            },
+            description: {
+              value: responseData.place.description,
+              isValid: true,
+            },
           },
-          description: {
-            value: identifiedPlace.description,
-            isValid: true,
-          },
-        },
-        true
-      );
-    }
-    setIsLoading(false);
-  }, [setFormData, identifiedPlace]);
+          true
+        );
+      } catch (err) {}
+    };
+    fetchPlace();
+  }, [sendRequest, placeId, setFormData]);
 
-  const placeSubmitHandler = (event) => {
+  const placeSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/${placeId}`,
+        "PATCH",
+        { "Content-Type": "application/json" },
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+        })
+      );
+      history.push("/" + auth.userId + "/places");
+    } catch (err) {}
   };
 
-  if (!identifiedPlace) {
+  if (isLoading) {
+    return (
+      <div className="center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (!loadedPlace && !error) {
     return (
       <div className="center">
         <Card>
@@ -93,41 +94,38 @@ const UpdatePlace = () => {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="center">
-        <h2>Loading...</h2>
-      </div>
-    );
-  }
-
   return (
-    <form className="place-form" onSubmit={placeSubmitHandler}>
-      <Input
-        id="title"
-        element="input"
-        type="text"
-        label="Title"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid title."
-        onInput={inputHandler}
-        initialValue={formState.inputs.title.value}
-        initialValid={formState.inputs.title.isValid}
-      />
-      <Input
-        id="description"
-        element="textarea"
-        label="Description"
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter a valid description (min. 5 characters)."
-        onInput={inputHandler}
-        initialValue={formState.inputs.description.value}
-        initialValid={formState.inputs.description.isValid}
-      />
-      <Button type="submit" disabled={!formState.isValid}>
-        UPDATE PLACE
-      </Button>
-    </form>
+    <>
+      <ErrorModal error={error} onClear={clearError} />
+      {!isLoading && loadedPlace && (
+        <form className="place-form" onSubmit={placeSubmitHandler}>
+          <Input
+            id="title"
+            element="input"
+            type="text"
+            label="Title"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid title."
+            onInput={inputHandler}
+            initialValue={loadedPlace.title}
+            initialValid={true}
+          />
+          <Input
+            id="description"
+            element="textarea"
+            label="Description"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid description (min. 5 characters)."
+            onInput={inputHandler}
+            initialValue={loadedPlace.description}
+            initialValid={true}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            UPDATE PLACE
+          </Button>
+        </form>
+      )}
+    </>
   );
 };
 
