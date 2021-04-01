@@ -13,7 +13,7 @@ const App = () => {
   const auth = useContext(AuthContext);
   let routes;
 
-  if (auth.isLoggedIn) {
+  if (auth.token) {
     routes = (
       <Switch>
         <Route path="/" component={Users} exact />
