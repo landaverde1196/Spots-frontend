@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 
 import NavBar from "./shared/components/Navigation/NavBar";
@@ -12,6 +12,13 @@ import { AuthContext } from "./shared/context/auth-context";
 const App = () => {
   const auth = useContext(AuthContext);
   let routes;
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    if (storedData && storedData.token) {
+      auth.login(storedData.userId, storedData.token);
+    }
+  }, [auth]);
 
   if (auth.token) {
     routes = (
