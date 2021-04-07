@@ -1,11 +1,12 @@
-import { useState, createContext, useCallback } from "react";
+import { useState, createContext, useCallback, useEffect } from "react";
 
 export const AuthContext = createContext();
+
+let logoutTimer;
 
 export const AuthContextProvider = (props) => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
 
   const login = useCallback((uid, token, expirationDate) => {
@@ -30,6 +31,32 @@ export const AuthContextProvider = (props) => {
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
   }, []);
+
+
+  useEffect(() => {
+    if (token && tokenExpirationDate) {
+      const remainingTime =
+        tokenExpirationDate.getTime() - new Date().getTime();
+      logoutTimer = setTimeout(logout, remainingTime);
+    } else {
+      clearTimeout(logoutTimer);
+    }
+  }, [token, logout, tokenExpirationDate]);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("userData"));
+    if (
+      storedData &&
+      storedData.token &&
+      new Date(storedData.expiration) > new Date()
+    ) {
+      login(
+        storedData.userId,
+        storedData.token,
+        new Date(storedData.expiration)
+      );
+    }
+  }, [login]);
 
   return (
     <AuthContext.Provider
