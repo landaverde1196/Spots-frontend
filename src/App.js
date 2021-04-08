@@ -1,13 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, Suspense } from "react";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 
 import NavBar from "./shared/components/Navigation/NavBar";
-import Users from "./user/pages/Users";
-import UserPlaces from "./places/pages/UserPlaces";
-import NewPlace from "./places/pages/NewPlace";
-import UpdatePlace from "./places/pages/UpdatePlace";
-import Auth from "./user/pages/Auth";
+import LoadingSpinner from "./shared/components/UIElements/LoadingSpinner";
 import { AuthContext } from "./shared/context/auth-context";
+
+const Users = React.lazy(() => import("./user/pages/Users"));
+const UserPlaces = React.lazy(() => import("./places/pages/UserPlaces"));
+const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
+const UpdatePlace = React.lazy(() => import("./places/pages/UpdatePlace"));
+const Auth = React.lazy(() => import("./user/pages/Auth"));
 
 const App = () => {
   const auth = useContext(AuthContext);
@@ -36,7 +38,17 @@ const App = () => {
   return (
     <BrowserRouter>
       <NavBar />
-      <main>{routes}</main>
+      <main>
+        <Suspense
+          fallback={
+            <div className="center">
+              <LoadingSpinner />
+            </div>
+          }
+        >
+          {routes}
+        </Suspense>
+      </main>
     </BrowserRouter>
   );
 };
