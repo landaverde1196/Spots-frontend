@@ -29,7 +29,7 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        process.env_REACT_APP_BACKEND_URL + `/places/${props.id}`,
+        process.env.REACT_APP_BACKEND_URL + `/places/${props.id}`,
         "DELETE",
         null,
         {
